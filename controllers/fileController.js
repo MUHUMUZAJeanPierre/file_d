@@ -1,16 +1,16 @@
-const fs = require("fs");
-const path = require("path");
-const File = require("../models/fileModel");
-const { validateFile } = require('../utils/fileValidation')
+import fs from "fs"
+import path from "path"
+import File from "../models/fileSchema.js";
+import { validateFile } from "../utils/fileValidation.js";
 
 
-const createFile = async (req, res) => {
+
+const create = async (req, res) => {
   if (!req.file) {
     return res.status(400).send({ error: "No file uploaded" });
   }
 
   try {
-    // Validate and extract file data
     const { fileName } = validateFile(req.body);
 
     if (!fileName) {
@@ -19,7 +19,6 @@ const createFile = async (req, res) => {
 
     const { path: filePath } = req.file;
 
-    // Check if the file already exists
     const existingFile = await File.findOne({ fileName });
     if (existingFile) {
       return res.status(409).send({ error: "A file with the same name already exists" });
@@ -67,7 +66,7 @@ const readFileById = async (req, res) => {
 };
 
 
-const readFile = async (req, res) => {
+const read = async (req, res) => {
   try {
     const files = await File.find();
     if (!files || files.length === 0) {
@@ -83,7 +82,7 @@ const readFile = async (req, res) => {
   }
 };
 
-const updateFile = async (req, res) => {
+const update = async (req, res) => {
   const { id } = req.params;
   const { fileName, filePath } = validateFile(req.body);
 
@@ -142,10 +141,11 @@ const deleteFile = async (req, res) => {
   }
 };
 
-module.exports = {
-  createFile,
+
+export {
+  create,
+  readFileById,
+  read,
+  update,
   deleteFile,
-  readFile,
-  updateFile,
-  readFileById
 };

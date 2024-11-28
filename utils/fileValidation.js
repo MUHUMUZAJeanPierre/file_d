@@ -1,4 +1,5 @@
-const Joi = require('joi');
+import Joi from 'joi';
+import { register } from 'module';
 
 const fileValidationSchema = Joi.object({
     fileName: Joi.string()
@@ -29,7 +30,7 @@ const options = {
     stripUnknown: true 
 };
 
-const validateFile = (fileData) => {
+export const validateFile = (fileData) => {
     const result = fileValidationSchema.validate(fileData, options);
     if (result.error) {
         throw new Error(result.error.details.map((err) => err.message).join(", "));
@@ -37,4 +38,4 @@ const validateFile = (fileData) => {
     return result.value; 
 };
 
-module.exports = { validateFile, options };
+

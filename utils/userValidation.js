@@ -1,6 +1,6 @@
-const Joi = require('joi');
+import  Joi from 'joi';
 
-const userValidationSchema = Joi.object({
+export const userValidationSchema = Joi.object({
     username: Joi.string()
         .alphanum()
         .min(3)
@@ -33,8 +33,8 @@ const userValidationSchema = Joi.object({
         })
 });
 
-const validateUser = (userData) => {
+export const validateUser = (userData) => {
     return userValidationSchema.validate(userData, { abortEarly: false });
 };
 
-module.exports = {validateUser} ;
+
