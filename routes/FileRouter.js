@@ -11,7 +11,7 @@ import {authenticateToken} from "../middleware/authorization.js";
 
 const router = express.Router();
 
-router.post("/", authenticateToken, upload.single("file"), create);
+router.post("/", upload.single("file"), create);
 router.get("/", authenticateToken, read);
 router.get("/:id", authenticateToken, readFileById);
 router.put("/:id", authenticateToken, update);

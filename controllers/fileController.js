@@ -84,7 +84,16 @@ const read = async (req, res) => {
 
 const update = async (req, res) => {
   const { id } = req.params;
-  const { fileName, filePath } = validateFile(req.body);
+
+  console.log("Request Body:", req.body);
+
+  let fileName, filePath;
+
+  try {
+    ({ fileName, filePath } = validateFile(req.body));
+  } catch (error) {
+    return res.status(400).send({ error: error.message });
+  }
 
   if (!id || !fileName || !filePath) {
     return res.status(400).send({ error: "id, fileName, and filePath are required" });
@@ -109,7 +118,6 @@ const update = async (req, res) => {
     res.status(500).send({ error: "Error updating file" });
   }
 };
-
 
 
 const deleteFile = async (req, res) => {
