@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/fileSchema.js";
+import User from "../models/UserSchema.js"; 
 import dotenv from "dotenv";
+import validator from "validator"; 
+
 dotenv.config();
 
 if (!process.env.JWT_SECRET) {
@@ -11,16 +13,28 @@ if (!process.env.JWT_SECRET) {
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+const passwordValidator = (password) => {
+    return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/.test(password);
+};
+
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
+
     try {
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({ status: "error", message: "Invalid email format" });
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ status: "error", message: "User already exists" });
         }
 
-        if (password.length < 6) {
-            return res.status(400).json({ status: "error", message: "Password must be at least 6 characters long" });
+        if (!passwordValidator(password)) {
+            return res.status(400).json({
+                status: "error",
+                message: "Password must be at least 6 characters long, include one uppercase letter, one number, and one special character."
+            });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,7 +42,7 @@ export const register = async (req, res) => {
         const newUser = new User({
             username,
             email,
-            password: hashedPassword,
+            password: hashedPassword
         });
 
         await newUser.save();
@@ -41,6 +55,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
+
     try {
         const user = await User.findOne({ email });
         if (!user) {
@@ -57,16 +72,15 @@ export const login = async (req, res) => {
             JWT_SECRET,
         );
 
-        // Respond with user data and token
         res.status(200).json({
             status: "success",
             message: "Login successful",
             user: {
                 id: user._id,
                 username: user.username,
-                email: user.email,
+                email: user.email
             },
-            token,
+            token
         });
     } catch (error) {
         console.error("Error during login:", error.stack || error);
