@@ -6,7 +6,7 @@ import {
   deleteFile,
   update
 } from "../controllers/fileController.js";
-import upload from "../middleware/multerConfig.js";
+import {upload} from "../middleware/multerConfig.js";
 import {authenticateToken} from "../middleware/authorization.js";
 
 const router = express.Router();

@@ -1,11 +1,7 @@
-import multer from "multer";
 import path from "path";
+import multer from "multer";
 
-// Manually construct the __dirname equivalent in ES modules
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
-// Correctly resolve the upload directory path
-const uploadDirectory = path.join(__dirname, "../user_files");
+const uploadDirectory = path.join(path.dirname(new URL(import.meta.url).pathname), "../uploads");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -16,6 +12,4 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
-
-export default upload;
+export const upload = multer({ storage: storage });
